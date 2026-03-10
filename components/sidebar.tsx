@@ -28,8 +28,9 @@ import {
 } from "lucide-react"
 import { useSidebar } from "@/app/sidebar-context"
 import { useAuth } from "@/app/auth-context"
+import { useLanguage } from "@/app/language-context"
 
-// Menu items with permission mapping
+// Menu items with permission mapping and translation keys (tk) for subItems
 const allMenuItems = [
   {
     id: "dashboard",
@@ -38,11 +39,11 @@ const allMenuItems = [
     href: "/dashboard",
     permission: "Dashboard",
     subItems: [
-      { label: "Overview / KPIs", href: "/dashboard/overview" },
-      { label: "Today's Check-ins/Check-outs", href: "/dashboard/checkins" },
-      { label: "Occupancy Rate", href: "/dashboard/occupancy" },
-      { label: "Revenue Summary", href: "/dashboard/revenue" },
-      { label: "Alerts & Notifications", href: "/dashboard/alerts" },
+      { label: "Overview / KPIs", href: "/dashboard/overview", tk: "overview" },
+      { label: "Today's Check-ins/Check-outs", href: "/dashboard/checkins", tk: "checkins" },
+      { label: "Occupancy Rate", href: "/dashboard/occupancy", tk: "occupancy" },
+      { label: "Revenue Summary", href: "/dashboard/revenue", tk: "revenue" },
+      { label: "Alerts & Notifications", href: "/dashboard/alerts", tk: "alerts" },
     ],
   },
   {
@@ -52,17 +53,17 @@ const allMenuItems = [
     href: "/reservations/dashboard",
     permission: "Reservations & Front Office",
     subItems: [
-      { label: "Dashboard", href: "/reservations/dashboard" },
-      { label: "New Reservation", href: "/reservations/new" },
-      { label: "Reservation List", href: "/reservations/list" },
-      { label: "Group Bookings", href: "/reservations/groups" },
-      { label: "Walk-in Booking", href: "/reservations/walkin/new-walkin" },
-      { label: "Walk-in List", href: "/reservations/walkin/walkin-list" },
-      { label: "Room Availability Calendar", href: "/reservations/availability-calendar" },
-      { label: "Check-In", href: "/reservations/checkin" },
-      { label: "Check-Out", href: "/reservations/checkout" },
-      { label: "Early Check-In / Late Check-Out", href: "/reservations/early-late" },
-      { label: "Cancellation / No-Show", href: "/cancellations" },
+      { label: "Dashboard", href: "/reservations/dashboard", tk: "dashboard" },
+      { label: "New Reservation", href: "/reservations/new", tk: "new" },
+      { label: "Reservation List", href: "/reservations/list", tk: "list" },
+      { label: "Group Bookings", href: "/reservations/groups", tk: "groups" },
+      { label: "Walk-in Booking", href: "/reservations/walkin/new-walkin", tk: "walkin_new" },
+      { label: "Walk-in List", href: "/reservations/walkin/walkin-list", tk: "walkin_list" },
+      { label: "Room Availability Calendar", href: "/reservations/availability-calendar", tk: "availability" },
+      { label: "Check-In", href: "/reservations/checkin", tk: "checkin" },
+      { label: "Check-Out", href: "/reservations/checkout", tk: "checkout" },
+      { label: "Early Check-In / Late Check-Out", href: "/reservations/early-late", tk: "early_late" },
+      { label: "Cancellation / No-Show", href: "/cancellations", tk: "cancellation" },
     ],
   },
   {
@@ -72,14 +73,14 @@ const allMenuItems = [
     href: "/rooms/list",
     permission: "Rooms & Property",
     subItems: [
-      { label: "Room Types", href: "/rooms/types", icon: LayoutGrid },
-      { label: "Add Room", href: "/rooms/add", icon: PlusCircle },
-      { label: "Room List", href: "/rooms/list", icon: List },
-      { label: "Room Status", href: "/rooms/status", icon: Activity },
-      { label: "Housekeeping Assignment", href: "/rooms/housekeeping", icon: ClipboardList },
-      { label: "Maintenance Requests", href: "/rooms/maintenance", icon: Wrench },
-      { label: "Floor Management", href: "/rooms/floors", icon: Layers },
-      { label: "Amenities Management", href: "/rooms/amenities", icon: Sparkles },
+      { label: "Room Types", href: "/rooms/types", icon: LayoutGrid, tk: "types" },
+      { label: "Add Room", href: "/rooms/add", icon: PlusCircle, tk: "add" },
+      { label: "Room List", href: "/rooms/list", icon: List, tk: "list" },
+      { label: "Room Status", href: "/rooms/status", icon: Activity, tk: "status" },
+      { label: "Housekeeping Assignment", href: "/rooms/housekeeping", icon: ClipboardList, tk: "housekeeping" },
+      { label: "Maintenance Requests", href: "/rooms/maintenance", icon: Wrench, tk: "maintenance" },
+      { label: "Floor Management", href: "/rooms/floors", icon: Layers, tk: "floors" },
+      { label: "Amenities Management", href: "/rooms/amenities", icon: Sparkles, tk: "amenities" },
     ],
   },
   {
@@ -89,12 +90,12 @@ const allMenuItems = [
     href: "/guests",
     permission: "Guests & CRM",
     subItems: [
-      { label: "Guest Profiles", href: "/guests/profiles" },
-      { label: "Guest History", href: "/guests/history" },
-      { label: "VIP / Blacklist", href: "/guests/vip" },
-      { label: "Preferences & Notes", href: "/guests/preferences" },
-      { label: "Loyalty Program", href: "/guests/loyalty" },
-      { label: "Feedback / Complaints", href: "/guests/feedback" },
+      { label: "Guest Profiles", href: "/guests/profiles", tk: "profiles" },
+      { label: "Guest History", href: "/guests/history", tk: "history" },
+      { label: "VIP / Blacklist", href: "/guests/vip", tk: "vip" },
+      { label: "Preferences & Notes", href: "/guests/preferences", tk: "preferences" },
+      { label: "Loyalty Program", href: "/guests/loyalty", tk: "loyalty" },
+      { label: "Feedback / Complaints", href: "/guests/feedback", tk: "feedback" },
     ],
   },
   {
@@ -104,11 +105,11 @@ const allMenuItems = [
     href: "/housekeeping",
     permission: "Housekeeping",
     subItems: [
-      { label: "Daily Cleaning Schedule", href: "/housekeeping/schedule" },
-      { label: "Room Inspection", href: "/housekeeping/inspection" },
-      { label: "Laundry Management", href: "/housekeeping/laundry" },
-      { label: "Linen Inventory", href: "/housekeeping/linen" },
-      { label: "Staff Assignment", href: "/housekeeping/staff" },
+      { label: "Daily Cleaning Schedule", href: "/housekeeping/schedule", tk: "schedule" },
+      { label: "Room Inspection", href: "/housekeeping/inspection", tk: "inspection" },
+      { label: "Laundry Management", href: "/housekeeping/laundry", tk: "laundry" },
+      { label: "Linen Inventory", href: "/housekeeping/linen", tk: "linen" },
+      { label: "Staff Assignment", href: "/housekeeping/staff", tk: "staff" },
     ],
   },
   {
@@ -118,15 +119,15 @@ const allMenuItems = [
     href: "/restaurant",
     permission: "Restaurant / POS",
     subItems: [
-      { label: "POS Billing", href: "/restaurant/billing" },
-      { label: "Table Management", href: "/restaurant/tables" },
-      { label: "Menu Management", href: "/restaurant/menu" },
-      { label: "Combo / Offers", href: "/restaurant/offers" },
-      { label: "Kitchen Order Tickets (KOT)", href: "/restaurant/kot" },
-      { label: "Bar Order Tracking (BOT)", href: "/restaurant/bot" },
-      { label: "Room Service Orders", href: "/restaurant/roomservice" },
-      { label: "Takeaway / Delivery", href: "/restaurant/takeaway" },
-      { label: "Happy Hour Pricing", href: "/restaurant/happy-hour-pricing" },
+      { label: "POS Billing", href: "/restaurant/billing", tk: "billing" },
+      { label: "Table Management", href: "/restaurant/tables", tk: "tables" },
+      { label: "Menu Management", href: "/restaurant/menu", tk: "menu" },
+      { label: "Combo / Offers", href: "/restaurant/offers", tk: "offers" },
+      { label: "Kitchen Order Tickets (KOT)", href: "/restaurant/kot", tk: "kot" },
+      { label: "Bar Order Tracking (BOT)", href: "/restaurant/bot", tk: "bot" },
+      { label: "Room Service Orders", href: "/restaurant/roomservice", tk: "roomservice" },
+      { label: "Takeaway / Delivery", href: "/restaurant/takeaway", tk: "takeaway" },
+      { label: "Happy Hour Pricing", href: "/restaurant/happy-hour-pricing", tk: "happyhour" },
     ],
   },
   {
@@ -136,14 +137,14 @@ const allMenuItems = [
     href: "/inventory",
     permission: "Inventory & Store",
     subItems: [
-      { label: "Item Categories", href: "/inventory/categories" },
-      { label: "Stock Items", href: "/inventory/items" },
-      { label: "Purchase Orders", href: "/inventory/orders" },
-      { label: "Supplier Management", href: "/inventory/suppliers" },
-      { label: "GRN (Goods Received Note)", href: "/inventory/grn" },
-      { label: "Stock Transfer", href: "/inventory/transfer" },
-      { label: "Stock Adjustment", href: "/inventory/adjustment" },
-      { label: "Minimum Stock Alerts", href: "/inventory/alerts" },
+      { label: "Item Categories", href: "/inventory/categories", tk: "categories" },
+      { label: "Stock Items", href: "/inventory/items", tk: "items" },
+      { label: "Purchase Orders", href: "/inventory/orders", tk: "orders" },
+      { label: "Supplier Management", href: "/inventory/suppliers", tk: "suppliers" },
+      { label: "GRN (Goods Received Note)", href: "/inventory/grn", tk: "grn" },
+      { label: "Stock Transfer", href: "/inventory/transfer", tk: "transfer" },
+      { label: "Stock Adjustment", href: "/inventory/adjustment", tk: "adjustment" },
+      { label: "Minimum Stock Alerts", href: "/inventory/alerts", tk: "alerts" },
     ],
   },
   {
@@ -153,19 +154,19 @@ const allMenuItems = [
     href: "/accounting",
     permission: "Accounting & Finance",
     subItems: [
-      { label: "Finance Dashboard", href: "/accounting/finance-dashboard" },
-      { label: "Chart of Accounts", href: "/accounting/chart-of-accounts" },
-      { label: "Guest Ledger", href: "/accounting/guest-ledger" },
-      { label: "Cash & Bank / BRS", href: "/accounting/cash-bank" },
-      { label: "Day Closing", href: "/accounting/dayclosing" },
-      { label: "Invoices", href: "/accounting/invoices" },
-      { label: "Payments & Receipts", href: "/accounting/payments" },
-      { label: "Expenses", href: "/accounting/expenses" },
-      { label: "Taxes (GST / VAT / Service Charge)", href: "/accounting/taxes" },
-      { label: "Journal Entries", href: "/accounting/journal-entries" },
-      { label: "Profit & Loss", href: "/accounting/profit-loss" },
-      { label: "Balance Sheet", href: "/accounting/balance-sheet" },
-      { label: "Trial Balance", href: "/accounting/trial" },
+      { label: "Finance Dashboard", href: "/accounting/finance-dashboard", tk: "dashboard" },
+      { label: "Chart of Accounts", href: "/accounting/chart-of-accounts", tk: "chart" },
+      { label: "Guest Ledger", href: "/accounting/guest-ledger", tk: "ledger" },
+      { label: "Cash & Bank / BRS", href: "/accounting/cash-bank", tk: "cash" },
+      { label: "Day Closing", href: "/accounting/dayclosing", tk: "dayclosing" },
+      { label: "Invoices", href: "/accounting/invoices", tk: "invoices" },
+      { label: "Payments & Receipts", href: "/accounting/payments", tk: "payments" },
+      { label: "Expenses", href: "/accounting/expenses", tk: "expenses" },
+      { label: "Taxes (GST / VAT / Service Charge)", href: "/accounting/taxes", tk: "taxes" },
+      { label: "Journal Entries", href: "/accounting/journal-entries", tk: "journal" },
+      { label: "Profit & Loss", href: "/accounting/profit-loss", tk: "pl" },
+      { label: "Balance Sheet", href: "/accounting/balance-sheet", tk: "balance" },
+      { label: "Trial Balance", href: "/accounting/trial", tk: "trial" },
     ],
   },
   {
@@ -175,29 +176,30 @@ const allMenuItems = [
     href: "/billing/dashboard",
     permission: "Billing & Invoicing",
     subItems: [
-      { label: "Dashboard", href: "/billing/dashboard" },
-      { label: "Room Bills", href: "/billing/roombills" },
-      { label: "Restaurant Bills", href: "/billing/restaurant/bills" },
-      { label: "Combined Bills", href: "/billing/combined" },
-      { label: "Advance Payments", href: "/billing/advance" },
-      { label: "Refunds", href: "/billing/refunds" },
-      { label: "Credit Notes", href: "/billing/credit-notes" },
-      { label: "Corporate Billing", href: "/billing/corporate-billing" },
+      { label: "Dashboard", href: "/billing/dashboard", tk: "dashboard" },
+      { label: "Room Bills", href: "/billing/roombills", tk: "roombills" },
+      { label: "Restaurant Bills", href: "/billing/restaurant/bills", tk: "restbills" },
+      { label: "Combined Bills", href: "/billing/combined", tk: "combined" },
+      { label: "Advance Payments", href: "/billing/advance", tk: "advance" },
+      { label: "Refunds", href: "/billing/refunds", tk: "refunds" },
+      { label: "Credit Notes", href: "/billing/credit-notes", tk: "credit" },
+      { label: "Corporate Billing", href: "/billing/corporate-billing", tk: "corporate" },
     ],
   },
   {
     id: "staff",
     label: "Staff & HR",
     icon: Users,
-    href: "/staff",
+    href: "/staff/dashboard",
     permission: "Staff & HR",
     subItems: [
-      { label: "Staff List", href: "/staff/list" },
-      { label: "Roles & Permissions", href: "/staff/roles" },
-      { label: "Attendance", href: "/staff/attendance" },
-      { label: "Shift Management", href: "/staff/shifts" },
-      { label: "Payroll", href: "/staff/payroll" },
-      { label: "Commission Setup", href: "/staff/commission" },
+      { label: "HR Dashboard", href: "/staff/dashboard", tk: "dashboard" },
+      { label: "Staff List", href: "/staff/list", tk: "list" },
+      { label: "Roles & Permissions", href: "/staff/roles-permissions", tk: "roles" },
+      { label: "Attendance", href: "/staff/attendance", tk: "attendance" },
+      { label: "Shift Management", href: "/staff/shift-management", tk: "shifts" },
+      { label: "Payroll", href: "/staff/payroll", tk: "payroll" },
+      { label: "Commission Setup", href: "/staff/commission-setup", tk: "commission" },
     ],
   },
   {
@@ -207,28 +209,29 @@ const allMenuItems = [
     href: "/reports",
     permission: "Reports",
     subItems: [
-      { label: "Occupancy Report", href: "/reports/occupancy" },
-      { label: "Revenue Report", href: "/reports/revenue" },
-      { label: "Room Revenue", href: "/reports/roomrevenue" },
-      { label: "Restaurant Sales", href: "/reports/sales" },
-      { label: "Tax Report", href: "/reports/tax" },
-      { label: "Expense Report", href: "/reports/expense" },
-      { label: "Inventory Report", href: "/reports/inventory" },
-      { label: "Staff Performance", href: "/reports/staff" },
-      { label: "Audit Logs", href: "/reports/audit" },
+      { label: "Occupancy Report", href: "/reports/occupancy", tk: "occupancy" },
+      { label: "Revenue Report", href: "/reports/revenue", tk: "revenue" },
+      { label: "Room Revenue", href: "/reports/roomrevenue", tk: "room_revenue" },
+      { label: "Restaurant Sales", href: "/reports/sales", tk: "sales" },
+      { label: "Tax Report", href: "/reports/tax", tk: "tax" },
+      { label: "Expense Report", href: "/reports/expense", tk: "expense" },
+      { label: "Inventory Report", href: "/reports/inventory", tk: "inventory" },
+      { label: "Staff Performance", href: "/reports/staff", tk: "staff" },
+      { label: "Audit Logs", href: "/reports/audit", tk: "audit" },
     ],
   },
   {
     id: "marketing",
     label: "Marketing & OTA",
     icon: Megaphone,
-    href: "/marketing",
+    href: "/marketing/dashboard",
     permission: "Marketing & OTA",
     subItems: [
-      { label: "Rate Plans", href: "/marketing/rates" },
-      { label: "Seasonal Pricing", href: "/marketing/seasonal" },
-      { label: "Promo Codes", href: "/marketing/promos" },
-      { label: "Email / SMS Campaigns", href: "/marketing/campaigns" },
+      { label: "Marketing & OTA Dashboard", href: "/marketing/dashboard", tk: "dashboard" },
+      { label: "Rate Plans", href: "/rate-plans", tk: "rates" },
+      { label: "Seasonal Pricing", href: "/seasonal-pricing", tk: "seasonal" },
+      { label: "Promo Codes", href: "/promo-codes", tk: "promos" },
+      { label: "Email / SMS Campaigns", href: "/marketing/campaigns", tk: "campaigns" },
     ],
   },
   {
@@ -238,10 +241,11 @@ const allMenuItems = [
     href: "/multi-property",
     permission: "Multi-Property",
     subItems: [
-      { label: "Property List", href: "/multi-property/list" },
-      { label: "Central Dashboard", href: "/multi-property/central" },
-      { label: "Property-wise Reports", href: "/multi-property/reports" },
-      { label: "User Access Control", href: "/multi-property/access" },
+      { label: "Multi-Property Dashboard", href: "/multi-property", tk: "dashboard" },
+      { label: "Property List", href: "/multi-property/properties", tk: "list" },
+      { label: "Central Dashboard", href: "/multi-property/central", tk: "central" },
+      { label: "Property-wise Reports", href: "/multi-property/reports", tk: "reports" },
+      { label: "User Access Control", href: "/multi-property/access", tk: "access" },
     ],
   },
   {
@@ -251,15 +255,15 @@ const allMenuItems = [
     href: "/settings",
     permission: "Settings",
     subItems: [
-      { label: "Hotel Profile", href: "/settings/profile" },
-      { label: "Check-in / Check-out Rules", href: "/settings/rules" },
-      { label: "Currency & Language", href: "/settings/currency" },
-      { label: "Taxes & Charges", href: "/settings/taxes" },
-      { label: "Payment Methods", href: "/settings/payment" },
-      { label: "Invoice Templates", href: "/settings/templates" },
-      { label: "POS Settings", href: "/settings/pos" },
-      { label: "Integration Settings", href: "/settings/integration" },
-      { label: "Themes", href: "/settings/themes" },
+      { label: "Hotel Profile", href: "/settings/profile", tk: "profile" },
+      { label: "Check-in / Check-out Rules", href: "/settings/rules", tk: "rules" },
+      { label: "Currency & Language", href: "/settings/currency", tk: "currency" },
+      { label: "Taxes & Charges", href: "/settings/taxes", tk: "taxes" },
+      { label: "Payment Methods", href: "/settings/payment", tk: "payment" },
+      { label: "Invoice Templates", href: "/settings/templates", tk: "templates" },
+      { label: "POS Settings", href: "/settings/pos", tk: "pos" },
+      { label: "Integration Settings", href: "/settings/integration", tk: "integration" },
+      { label: "Themes", href: "/settings/themes", tk: "themes" },
     ],
   },
   {
@@ -269,19 +273,24 @@ const allMenuItems = [
     href: "/help",
     permission: "Help & System",
     subItems: [
-      { label: "User Guide", href: "/help/guide" },
-      { label: "Support Tickets", href: "/help/tickets" },
-      { label: "Activity Logs", href: "/help/logs" },
-      { label: "Backup & Restore", href: "/help/backup" },
-      { label: "System Updates", href: "/help/updates" },
+      { label: "User Guide", href: "/help/guide", tk: "guide" },
+      { label: "Support Tickets", href: "/help/tickets", tk: "tickets" },
+      { label: "Activity Logs", href: "/help/logs", tk: "logs" },
+      { label: "Backup & Restore", href: "/help/backup", tk: "backup" },
+      { label: "System Updates", href: "/help/updates", tk: "updates" },
     ],
   },
 ]
+
+function menuKey(id: string) {
+  return id.replace(/-/g, "_")
+}
 
 export function Sidebar() {
   const [expandedItems, setExpandedItems] = useState<string[]>([])
   const { isCollapsed, isMobileOpen, closeMobileSidebar } = useSidebar()
   const { user, plan, loading } = useAuth()
+  const { t } = useLanguage()
 
   // Filter menu items based on plan permissions
   const getFilteredMenuItems = () => {
@@ -344,12 +353,14 @@ export function Sidebar() {
         <nav className="p-4 space-y-2">
           {menuItems.length === 0 ? (
             <div className="text-amber-100 text-sm p-4">
-              No menu items available. Please contact your administrator.
+              {t("menu.no_items")}
             </div>
           ) : (
             menuItems.map((item) => {
               const hasSubItems = item.subItems.length > 0
               const isExpanded = expandedItems.includes(item.id)
+              const mKey = menuKey(item.id)
+              const itemLabel = t(`menu.${mKey}`)
 
               return (
                 <div key={item.id}>
@@ -359,12 +370,12 @@ export function Sidebar() {
                       toggleExpand(item.id)
                     }}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-700/50 transition-colors text-left"
-                    title={item.label}
+                    title={itemLabel}
                   >
                     <item.icon className="w-5 h-5 shrink-0" />
                     {!isCollapsed && (
                       <>
-                        <span className="font-medium flex-1">{item.label}</span>
+                        <span className="font-medium flex-1">{itemLabel}</span>
                         {hasSubItems && (
                           <ChevronDown
                             className={`w-5 h-5 transition-transform ${
@@ -381,6 +392,8 @@ export function Sidebar() {
                     <div className="ml-4 mt-1 space-y-1 border-l-2 border-amber-400/30 pl-4">
                       {item.subItems.map((subItem, idx) => {
                         const SubIcon = "icon" in subItem ? (subItem as { icon?: React.ComponentType<{ className?: string }> }).icon : undefined
+                        const subTk = "tk" in subItem ? (subItem as { tk: string }).tk : ""
+                        const subLabel = subTk ? t(`menu.${mKey}_${subTk}`) : subItem.label
                         return (
                           <Link
                             key={idx}
@@ -388,7 +401,7 @@ export function Sidebar() {
                             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-amber-100 hover:text-white hover:bg-red-700/30 transition-colors"
                           >
                             {SubIcon && <SubIcon className="w-4 h-4 shrink-0 opacity-90" />}
-                            {subItem.label}
+                            {subLabel}
                           </Link>
                         )
                       })}

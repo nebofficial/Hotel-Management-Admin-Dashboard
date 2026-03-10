@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Menu, LogOut, User } from "lucide-react"
 import { useSidebar } from "@/app/sidebar-context"
 import { useAuth } from "@/app/auth-context"
+import { useLanguage } from "@/app/language-context"
 import { useState, useLayoutEffect } from "react"
 
 export function Navbar() {
   const { toggleMobileSidebar } = useSidebar()
   const { user, logout, loading } = useAuth()
+  const { t } = useLanguage()
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
 
@@ -39,7 +41,7 @@ export function Navbar() {
                 <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-md flex items-center justify-center text-red-900 font-bold text-sm shadow-md">
                   HM
                 </div>
-                <span className="font-serif font-bold text-amber-100 hidden sm:inline text-lg">Hotel Manager</span>
+                <span className="font-serif font-bold text-amber-100 hidden sm:inline text-lg">{t("app.name")}</span>
               </div>
             </div>
           </div>
@@ -65,7 +67,7 @@ export function Navbar() {
               <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-md flex items-center justify-center text-red-900 font-bold text-sm shadow-md">
                 HM
               </div>
-              <span className="font-serif font-bold text-amber-100 hidden sm:inline text-lg">Hotel Manager</span>
+              <span className="font-serif font-bold text-amber-100 hidden sm:inline text-lg">{t("app.name")}</span>
             </Link>
           </div>
 
@@ -80,16 +82,16 @@ export function Navbar() {
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-2 text-amber-100 hover:text-white px-3 py-2 rounded-lg hover:bg-red-700/50 transition-colors"
-                  title="Logout"
+                  title={t("nav.logout")}
                 >
                   <LogOut className="w-4 h-4" />
-                  <span className="hidden sm:inline">Logout</span>
+                  <span className="hidden sm:inline">{t("nav.logout")}</span>
                 </button>
               </>
             ) : (
               <Link href="/login">
                 <Button variant="ghost" className="text-amber-100 hover:text-white hover:bg-red-800">
-                  Login
+                  {t("nav.login")}
                 </Button>
               </Link>
             )}

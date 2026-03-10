@@ -1,7 +1,7 @@
 'use client'
 
-import InventoryReports from '@/components/inventory/reports/InventoryReports'
+import InventoryReport from '@/components/reports/inventoryReport/InventoryReport'
 
 export default function InventoryReportPage() {
-  return <InventoryReports />
+  return <InventoryReport />
 }
