@@ -11,7 +11,9 @@ async function handle(res, fallbackMsg) {
 }
 
 export async function fetchRevenueSummary(apiBase, params = {}) {
-  if (!apiBase) {
+  // If we don't have an API base or auth token yet, return
+  // a safe default summary instead of throwing errors.
+  if (!apiBase || !getToken()) {
     return {
       totalRevenue: 0,
       roomRevenue: 0,
@@ -30,7 +32,7 @@ export async function fetchRevenueSummary(apiBase, params = {}) {
 }
 
 export async function fetchOccupancyStats(apiBase, params = {}) {
-  if (!apiBase) {
+  if (!apiBase || !getToken()) {
     return {
       totalRooms: 0,
       roomsOccupiedToday: 0,
@@ -47,7 +49,7 @@ export async function fetchOccupancyStats(apiBase, params = {}) {
 }
 
 export async function fetchRestaurantSales(apiBase, params = {}) {
-  if (!apiBase) {
+  if (!apiBase || !getToken()) {
     return {
       totalSales: 0,
       ordersCount: 0,
@@ -64,7 +66,7 @@ export async function fetchRestaurantSales(apiBase, params = {}) {
 }
 
 export async function fetchExpenseSummary(apiBase, params = {}) {
-  if (!apiBase) {
+  if (!apiBase || !getToken()) {
     return {
       totalExpenses: 0,
       operationalCosts: 0,
@@ -80,7 +82,7 @@ export async function fetchExpenseSummary(apiBase, params = {}) {
 }
 
 export async function fetchReportsCharts(apiBase, params = {}) {
-  if (!apiBase) {
+  if (!apiBase || !getToken()) {
     return {
       revenueTrend: [],
       occupancyTrend: [],
@@ -92,7 +94,27 @@ export async function fetchReportsCharts(apiBase, params = {}) {
   const res = await fetch(`${apiBase}/reports-dashboard/charts${qs ? `?${qs}` : ''}`, {
     headers: { Authorization: headers().Authorization },
   });
-  return handle(res, 'Failed to load dashboard charts');
+
+  // Be forgiving for charts: if this endpoint fails, return an empty
+  // structure instead of throwing, so the rest of the dashboard keeps working.
+  let data = {};
+  try {
+    data = await res.json().catch(() => ({}));
+  } catch {
+    // ignore JSON parse errors and fall back to defaults
+  }
+
+  if (!res.ok) {
+    console.warn('Failed to load dashboard charts', data);
+    return {
+      revenueTrend: [],
+      occupancyTrend: [],
+      salesBreakdown: [],
+      recentReports: [],
+    };
+  }
+
+  return data;
 }
 
 export async function exportDashboardReport(apiBase, params = {}) {

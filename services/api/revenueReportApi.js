@@ -11,7 +11,9 @@ async function handle(res, fallbackMsg) {
 }
 
 export async function fetchTotalRevenue(apiBase, params = {}) {
-  if (!apiBase) {
+  // If we don't yet have a base URL or auth token (e.g. user not logged in),
+  // return safe defaults instead of hitting the backend.
+  if (!apiBase || !getToken()) {
     return {
       totalRevenueToday: 0,
       totalRevenueThisMonth: 0,
@@ -24,11 +26,30 @@ export async function fetchTotalRevenue(apiBase, params = {}) {
     `${apiBase}/revenue-report/total${qs ? `?${qs}` : ''}`,
     { headers: { Authorization: headers().Authorization } },
   );
-  return handle(res, 'Failed to load total revenue');
+
+  // Be forgiving here: if this endpoint fails for any reason,
+  // log a soft warning and return zeros so the report UI
+  // continues working without noisy console errors.
+  let data = {};
+  try {
+    data = await res.json().catch(() => ({}));
+  } catch {
+    // ignore JSON parse issues and fall back to defaults
+  }
+  if (!res.ok) {
+    console.warn('Failed to load total revenue', data);
+    return {
+      totalRevenueToday: 0,
+      totalRevenueThisMonth: 0,
+      totalRevenueThisYear: 0,
+      averageDailyRevenue: 0,
+    };
+  }
+  return data;
 }
 
 export async function fetchRevenueByRooms(apiBase, params = {}) {
-  if (!apiBase) return { revenueByRooms: [] };
+  if (!apiBase || !getToken()) return { revenueByRooms: [] };
   const qs = new URLSearchParams(params).toString();
   const res = await fetch(
     `${apiBase}/revenue-report/by-rooms${qs ? `?${qs}` : ''}`,
@@ -38,7 +59,7 @@ export async function fetchRevenueByRooms(apiBase, params = {}) {
 }
 
 export async function fetchRevenueByRestaurant(apiBase, params = {}) {
-  if (!apiBase) return { totalOrders: 0, totalSales: 0, averageOrderValue: 0 };
+  if (!apiBase || !getToken()) return { totalOrders: 0, totalSales: 0, averageOrderValue: 0 };
   const qs = new URLSearchParams(params).toString();
   const res = await fetch(
     `${apiBase}/revenue-report/by-restaurant${qs ? `?${qs}` : ''}`,
@@ -48,17 +69,32 @@ export async function fetchRevenueByRestaurant(apiBase, params = {}) {
 }
 
 export async function fetchRevenueByServices(apiBase, params = {}) {
-  if (!apiBase) return { services: [], totalServiceRevenue: 0 };
+  if (!apiBase || !getToken()) return { services: [], totalServiceRevenue: 0 };
+
   const qs = new URLSearchParams(params).toString();
   const res = await fetch(
     `${apiBase}/revenue-report/by-services${qs ? `?${qs}` : ''}`,
     { headers: { Authorization: headers().Authorization } },
   );
-  return handle(res, 'Failed to load services revenue');
+
+  // Graceful handling: avoid throwing on backend errors, return defaults instead.
+  let data = {};
+  try {
+    data = await res.json().catch(() => ({}));
+  } catch {
+    // ignore parse errors
+  }
+
+  if (!res.ok) {
+    console.warn('Failed to load services revenue', data);
+    return { services: [], totalServiceRevenue: 0 };
+  }
+
+  return data;
 }
 
 export async function fetchDailyRevenue(apiBase, params = {}) {
-  if (!apiBase) return { daily: [] };
+  if (!apiBase || !getToken()) return { daily: [] };
   const qs = new URLSearchParams(params).toString();
   const res = await fetch(
     `${apiBase}/revenue-report/daily${qs ? `?${qs}` : ''}`,
@@ -68,7 +104,7 @@ export async function fetchDailyRevenue(apiBase, params = {}) {
 }
 
 export async function fetchMonthlyRevenue(apiBase, params = {}) {
-  if (!apiBase) return { monthly: [] };
+  if (!apiBase || !getToken()) return { monthly: [] };
   const qs = new URLSearchParams(params).toString();
   const res = await fetch(
     `${apiBase}/revenue-report/monthly${qs ? `?${qs}` : ''}`,
@@ -78,7 +114,7 @@ export async function fetchMonthlyRevenue(apiBase, params = {}) {
 }
 
 export async function fetchRevenueTrend(apiBase, params = {}) {
-  if (!apiBase) return { trend: [], departmentRevenue: [] };
+  if (!apiBase || !getToken()) return { trend: [], departmentRevenue: [] };
   const qs = new URLSearchParams(params).toString();
   const res = await fetch(
     `${apiBase}/revenue-report/trend${qs ? `?${qs}` : ''}`,

@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import {
   Home,
   Calendar,
@@ -264,6 +265,8 @@ const allMenuItems = [
       { label: "POS Settings", href: "/settings/pos", tk: "pos" },
       { label: "Integration Settings", href: "/settings/integration", tk: "integration" },
       { label: "Themes", href: "/settings/themes", tk: "themes" },
+      { label: "System Updates", href: "/settings/system-updates", tk: "updates" },
+      { label: "Backup & Restore", href: "/settings/backup-restore", tk: "backup" },
     ],
   },
   {
@@ -291,6 +294,7 @@ export function Sidebar() {
   const { isCollapsed, isMobileOpen, closeMobileSidebar } = useSidebar()
   const { user, plan, loading } = useAuth()
   const { t } = useLanguage()
+  const pathname = usePathname()
 
   // Filter menu items based on plan permissions
   const getFilteredMenuItems = () => {
@@ -344,13 +348,11 @@ export function Sidebar() {
         />
       )}
       <aside
-        className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-linear-to-b from-red-900 to-red-950 text-white z-30 overflow-y-auto transition-all duration-300 ${
+        className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white text-slate-800 border-r border-slate-200 z-30 overflow-y-auto transition-all duration-300 ${
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 w-64 md:flex ${
-          isCollapsed ? "md:w-20" : "md:w-64"
-        }`}
+        } md:translate-x-0 ${isCollapsed ? "w-16 md:w-16" : "w-64 md:w-64"}`}
       >
-        <nav className="p-4 space-y-2">
+        <nav className="py-4 px-2 space-y-1">
           {menuItems.length === 0 ? (
             <div className="text-amber-100 text-sm p-4">
               {t("menu.no_items")}
@@ -361,6 +363,17 @@ export function Sidebar() {
               const isExpanded = expandedItems.includes(item.id)
               const mKey = menuKey(item.id)
               const itemLabel = t(`menu.${mKey}`)
+              const isActiveSection =
+                pathname === item.href || pathname.startsWith(item.href + "/")
+
+              const baseItemClasses =
+                "w-full flex items-center rounded-xl text-sm font-medium transition-colors"
+              const spacingClasses = isCollapsed
+                ? "justify-center px-0 py-3"
+                : "justify-between px-3 py-2.5"
+              const colorClasses = isActiveSection
+                ? "bg-sky-100 text-sky-700 shadow-sm"
+                : "text-slate-700 hover:bg-slate-100"
 
               return (
                 <div key={item.id}>
@@ -369,13 +382,17 @@ export function Sidebar() {
                     onClick={() => {
                       toggleExpand(item.id)
                     }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-700/50 transition-colors text-left"
+                    className={`${baseItemClasses} ${spacingClasses} ${colorClasses}`}
                     title={itemLabel}
                   >
-                    <item.icon className="w-5 h-5 shrink-0" />
+                    <item.icon
+                      className={`w-5 h-5 shrink-0 ${
+                        isActiveSection ? "text-sky-600" : "text-slate-500"
+                      }`}
+                    />
                     {!isCollapsed && (
                       <>
-                        <span className="font-medium flex-1">{itemLabel}</span>
+                        <span className="ml-3 flex-1 truncate">{itemLabel}</span>
                         {hasSubItems && (
                           <ChevronDown
                             className={`w-5 h-5 transition-transform ${
@@ -389,16 +406,24 @@ export function Sidebar() {
 
                   {/* Sub-menu items */}
                   {hasSubItems && isExpanded && !isCollapsed && (
-                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-amber-400/30 pl-4">
+                    <div className="ml-4 mt-1 space-y-0.5 border-l border-slate-200 pl-3">
                       {item.subItems.map((subItem, idx) => {
                         const SubIcon = "icon" in subItem ? (subItem as { icon?: React.ComponentType<{ className?: string }> }).icon : undefined
                         const subTk = "tk" in subItem ? (subItem as { tk: string }).tk : ""
                         const subLabel = subTk ? t(`menu.${mKey}_${subTk}`) : subItem.label
+                        const isActiveSub =
+                          pathname === subItem.href ||
+                          pathname.startsWith(subItem.href + "/")
+
                         return (
                           <Link
                             key={idx}
                             href={subItem.href}
-                            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-amber-100 hover:text-white hover:bg-red-700/30 transition-colors"
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-colors ${
+                              isActiveSub
+                                ? "bg-sky-50 text-sky-700"
+                                : "text-slate-600 hover:bg-slate-100"
+                            }`}
                           >
                             {SubIcon && <SubIcon className="w-4 h-4 shrink-0 opacity-90" />}
                             {subLabel}
