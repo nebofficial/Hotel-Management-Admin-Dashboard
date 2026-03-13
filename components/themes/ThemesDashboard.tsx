@@ -143,7 +143,10 @@ export default function ThemesDashboard() {
           ? "600"
           : "400";
 
+    // Update global font family and size so rem-based Tailwind classes
+    // (text-xs, text-sm, etc.) scale with the selected size.
     root.style.setProperty("--font-sans", family);
+    root.style.fontSize = size;
     root.style.setProperty("--app-font-size", size);
     root.style.setProperty(
       "--app-line-height",

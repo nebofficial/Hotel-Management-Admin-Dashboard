@@ -144,6 +144,35 @@
     font-weight: var(--app-heading-weight);
   }
 
+  /* Make Tailwind text size utilities respect the dynamic app font size */
+  .text-xs {
+    font-size: calc(var(--app-font-size) * 0.75);
+  }
+  .text-sm {
+    font-size: calc(var(--app-font-size) * 0.875);
+  }
+  .text-base {
+    font-size: var(--app-font-size);
+  }
+  .text-lg {
+    font-size: calc(var(--app-font-size) * 1.125);
+  }
+  .text-xl {
+    font-size: calc(var(--app-font-size) * 1.25);
+  }
+  .text-2xl {
+    font-size: calc(var(--app-font-size) * 1.5);
+  }
+  .text-3xl {
+    font-size: calc(var(--app-font-size) * 1.875);
+  }
+  .text-4xl {
+    font-size: calc(var(--app-font-size) * 2.25);
+  }
+  .text-5xl {
+    font-size: calc(var(--app-font-size) * 3);
+  }
+
   /* Hide scrollbars while maintaining scroll functionality */
   ::-webkit-scrollbar {
     display: none;

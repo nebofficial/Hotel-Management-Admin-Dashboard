@@ -28,7 +28,27 @@ export async function fetchRevenueSummary(apiBase, params = {}) {
   const res = await fetch(`${apiBase}/reports-dashboard/revenue-summary${qs ? `?${qs}` : ''}`, {
     headers: { Authorization: headers().Authorization },
   });
-  return handle(res, 'Failed to load revenue summary');
+  // Be forgiving: if the backend returns an error, return safe defaults
+  // so the dashboard can still render without noisy console errors.
+  let data = {};
+  try {
+    data = await res.json().catch(() => ({}));
+  } catch {
+    // ignore parse errors
+  }
+  if (!res.ok) {
+    console.warn('Failed to load revenue summary', data);
+    return {
+      totalRevenue: 0,
+      roomRevenue: 0,
+      restaurantRevenue: 0,
+      otherServicesRevenue: 0,
+      currency: 'INR',
+      byDate: [],
+      bySource: [],
+    };
+  }
+  return data;
 }
 
 export async function fetchOccupancyStats(apiBase, params = {}) {
